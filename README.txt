@@ -558,6 +558,80 @@ Safe:
     ->prepare("select * from accounts where username = ?")
     ->execute(array('$user_name'))
 
+XSS
+---
+
+"XSS = Cross Site Scripting"
+
+"Allow an attacker to inject js code into the page, code is executed when the page, code is executed on client machine not the server."
+
+(3) Main Types of XSS
+- Persistent/Stored XSS
+- Reflected XSS
+- DOM based XSS
+
+"In DVWA, XSS reflected => http://192.168.104.6/dvwa/vulnerabilities/xss_r/"
+
+"In DVWA => http://192.168.104.6/dvwa/vulnerabilities/xss_s/"
+
+"Test the following js code"
+
+<script>alert("XSS")</script>
+
+<script>alert(String.fromCharCode(85, 110, 99, 108, 101, 32, 74, 105, 109))</script>
+
+"In Mutillidae => http://192.168.104.6/mutillidae/index.php?page=password-generator.php"
+
+"In Mutillidae => http://192.168.104.6/mutillidae/index.php?page=password-generator.php&username=zaw"
+
+"Test the following js code in url"
+
+> ";alert("xss");//
+
+> http://192.168.104.6/mutillidae/index.php?page=password-generator.php&username=zaw%22;alert(%22xss%22);//
+
+BeEF
+----
+
+BeEF is short for The Browser Exploitation Framework. It is a penetration testing tool that focuses on the web browser. ... BeEF will hook one or more web browsers and use them as beachheads for launching directed command modules and further attacks against the system from within the browser context.
+
+Ref: https://beefproject.com/
+
+"Inject beef code in => http://192.168.104.6/dvwa/vulnerabilities/xss_s/"
+
+Veil
+---
+
+Veil is a tool designed to generate metasploit payloads that bypass common anti-virus solutions.
+
+Ref: https://github.com/Veil-Framework/Veil
+
+Metasploit
+----------
+
+Metasploit is a penetration testing platform that enables you to find, exploit, and validate vulnerabilities. It provides the infrastructure, content, and tools to perform penetration tests and extensive security auditing and thanks to the open source community and Rapid7’s own hard working content team, new modules are added on a regular basis, which means that the latest exploit is available to you as soon as it’s published.
+
+Ref: https://tools.kali.org/exploitation-tools/metasploit-framework
+
+"Generate backdoor in Veil then deliver by BeEf after that listen on Metasploit."
+
+No Distribute
+-------------
+
+Scan your file online with multiple different antiviruses without distributing the results of your scan.
+
+Ref: https://nodistribute.com/
+
+XSS - Prevention
+---
+
+<?php
+
+echo '<pre>';
+echo 'Hello ' . htmlspecialchars($_GET['name']);
+echo '</pre>';
+
+
 
 
 
